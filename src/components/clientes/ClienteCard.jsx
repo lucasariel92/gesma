@@ -1,4 +1,4 @@
-const ClienteCard = ({ cliente }) => {
+const ClienteCard = ({ cliente, onEdit, onDelete }) => {
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200">
       <div className="bg-gradient-to-r from-primary to-primary-dark p-6">
@@ -41,11 +41,17 @@ const ClienteCard = ({ cliente }) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-2">
-        <button className="flex-1 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors font-medium">
-          Ver Detalles
-        </button>
-        <button className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+        <button 
+          onClick={onEdit}
+          className="flex-1 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors font-medium"
+        >
           Editar
+        </button>
+        <button 
+          onClick={onDelete}
+          className="flex-1 px-4 py-2 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors font-medium"
+        >
+          Eliminar
         </button>
       </div>
     </div>

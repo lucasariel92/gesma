@@ -12,7 +12,7 @@ const DashboardLayout = () => {
 
       <footer className="bg-dark border-t border-gray-700 py-4 mt-auto">
         <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
-          © 2025 DCE Servicios - Gestión de Mantenimientos
+          © 2025 DCE Ingeniería - Gestión de Mantenimientos
         </div>
       </footer>
     </div>
