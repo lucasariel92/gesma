@@ -5,6 +5,9 @@ import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import DashboardLayout from '../layouts/DashboardLayout';
 import ClientesPage from '../pages/ClientesPage';
+import SucursalesPage from '../pages/SucursalesPage';
+import EquiposPage from '../pages/EquiposPage';
+import MantenimientosPage from '../pages/MantenimientosPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 const AppRouter = () => {
@@ -13,7 +16,6 @@ const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rutas públicas - redirigen al dashboard si ya estás autenticado */}
         <Route 
           path="/login" 
           element={currentUser ? <Navigate to="/clientes" replace /> : <LoginPage />} 
@@ -23,7 +25,6 @@ const AppRouter = () => {
           element={currentUser ? <Navigate to="/clientes" replace /> : <RegisterPage />} 
         />
 
-        {/* Rutas protegidas - requieren autenticación */}
         <Route 
           path="/" 
           element={
@@ -34,9 +35,11 @@ const AppRouter = () => {
         >
           <Route index element={<Navigate to="/clientes" replace />} />
           <Route path="clientes" element={<ClientesPage />} />
+          <Route path="sucursales" element={<SucursalesPage />} />
+          <Route path="equipos" element={<EquiposPage />} />
+          <Route path="mantenimientos" element={<MantenimientosPage />} />
         </Route>
 
-        {/* Página 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
