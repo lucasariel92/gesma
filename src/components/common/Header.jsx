@@ -39,17 +39,14 @@ const Header = () => {
           </Link>
 
           <nav className="flex items-center space-x-2">
+            <Link to="/" className={getLinkClass('/')}>
+              Dashboard
+            </Link>
             <Link to="/clientes" className={getLinkClass('/clientes')}>
               Clientes
             </Link>
-            <Link to="/sucursales" className={getLinkClass('/sucursales')}>
-              Sucursales
-            </Link>
             <Link to="/equipos" className={getLinkClass('/equipos')}>
               Equipos
-            </Link>
-            <Link to="/mantenimientos" className={getLinkClass('/mantenimientos')}>
-              Mantenimientos
             </Link>
             
             <div className="relative ml-4">

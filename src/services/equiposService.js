@@ -32,6 +32,21 @@ export const getEquiposBySucursal = async (sucursalId) => {
   }
 };
 
+export const getEquiposByCliente = async (clienteId) => {
+  try {
+    const q = query(collection(db, COLLECTION_NAME), where('clienteId', '==', clienteId));
+    const querySnapshot = await getDocs(q);
+    const equipos = [];
+    querySnapshot.forEach((doc) => {
+      equipos.push({ id: doc.id, ...doc.data() });
+    });
+    return equipos;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+};
+
 export const createEquipo = async (equipoData) => {
   try {
     const docRef = await addDoc(collection(db, COLLECTION_NAME), {

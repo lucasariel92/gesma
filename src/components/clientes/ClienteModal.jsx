@@ -6,7 +6,10 @@ const ClienteModal = ({ isOpen, onClose, onSubmit, cliente = null, loading = fal
     email: '',
     telefono: '',
     cuit: '',
-    direccion: ''
+    direccion: '',
+    contactoPrincipal: '',
+    telefonoContacto: '',
+    observaciones: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -18,7 +21,10 @@ const ClienteModal = ({ isOpen, onClose, onSubmit, cliente = null, loading = fal
         email: cliente.email || '',
         telefono: cliente.telefono || '',
         cuit: cliente.cuit || '',
-        direccion: cliente.direccion || ''
+        direccion: cliente.direccion || '',
+        contactoPrincipal: cliente.contactoPrincipal || '',
+        telefonoContacto: cliente.telefonoContacto || '',
+        observaciones: cliente.observaciones || ''
       });
     } else {
       setFormData({
@@ -26,7 +32,10 @@ const ClienteModal = ({ isOpen, onClose, onSubmit, cliente = null, loading = fal
         email: '',
         telefono: '',
         cuit: '',
-        direccion: ''
+        direccion: '',
+        contactoPrincipal: '',
+        telefonoContacto: '',
+        observaciones: ''
       });
     }
     setErrors({});
@@ -76,7 +85,7 @@ const ClienteModal = ({ isOpen, onClose, onSubmit, cliente = null, loading = fal
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-gradient-to-r from-primary to-primary-dark p-6 text-white">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">
@@ -93,47 +102,47 @@ const ClienteModal = ({ isOpen, onClose, onSubmit, cliente = null, loading = fal
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nombre <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              disabled={loading}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100 ${
-                errors.nombre ? 'border-danger' : 'border-gray-300'
-              }`}
-              placeholder="Nombre del cliente"
-            />
-            {errors.nombre && (
-              <p className="mt-1 text-sm text-danger">{errors.nombre}</p>
-            )}
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nombre <span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100 ${
+                  errors.nombre ? 'border-danger' : 'border-gray-300'
+                }`}
+                placeholder="Nombre del cliente"
+              />
+              {errors.nombre && (
+                <p className="mt-1 text-sm text-danger">{errors.nombre}</p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email <span className="text-danger">*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={loading}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100 ${
-                errors.email ? 'border-danger' : 'border-gray-300'
-              }`}
-              placeholder="email@ejemplo.com"
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-danger">{errors.email}</p>
-            )}
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email <span className="text-danger">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100 ${
+                  errors.email ? 'border-danger' : 'border-gray-300'
+                }`}
+                placeholder="email@ejemplo.com"
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-danger">{errors.email}</p>
+              )}
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Teléfono
@@ -173,21 +182,66 @@ const ClienteModal = ({ isOpen, onClose, onSubmit, cliente = null, loading = fal
                 <p className="mt-1 text-sm text-danger">{errors.cuit}</p>
               )}
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Dirección
-            </label>
-            <textarea
-              name="direccion"
-              value={formData.direccion}
-              onChange={handleChange}
-              disabled={loading}
-              rows="3"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100 resize-none"
-              placeholder="Dirección completa"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Dirección
+              </label>
+              <input
+                type="text"
+                name="direccion"
+                value={formData.direccion}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100"
+                placeholder="Dirección completa"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contacto Principal
+              </label>
+              <input
+                type="text"
+                name="contactoPrincipal"
+                value={formData.contactoPrincipal}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100"
+                placeholder="Nombre del contacto"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Teléfono del Contacto
+              </label>
+              <input
+                type="tel"
+                name="telefonoContacto"
+                value={formData.telefonoContacto}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100"
+                placeholder="1123456789"
+              />
+            </div>
+
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Observaciones
+              </label>
+              <textarea
+                name="observaciones"
+                value={formData.observaciones}
+                onChange={handleChange}
+                disabled={loading}
+                rows="3"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all disabled:bg-gray-100 resize-none"
+                placeholder="Notas adicionales sobre el cliente"
+              />
+            </div>
           </div>
 
           <div className="flex gap-3 pt-4">

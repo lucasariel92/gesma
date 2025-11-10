@@ -4,10 +4,9 @@ import PrivateRoute from '../components/common/PrivateRoute';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardPage from '../pages/DashboardPage';
 import ClientesPage from '../pages/ClientesPage';
-import SucursalesPage from '../pages/SucursalesPage';
 import EquiposPage from '../pages/EquiposPage';
-import MantenimientosPage from '../pages/MantenimientosPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 const AppRouter = () => {
@@ -18,11 +17,11 @@ const AppRouter = () => {
       <Routes>
         <Route 
           path="/login" 
-          element={currentUser ? <Navigate to="/clientes" replace /> : <LoginPage />} 
+          element={currentUser ? <Navigate to="/" replace /> : <LoginPage />} 
         />
         <Route 
           path="/register" 
-          element={currentUser ? <Navigate to="/clientes" replace /> : <RegisterPage />} 
+          element={currentUser ? <Navigate to="/" replace /> : <RegisterPage />} 
         />
 
         <Route 
@@ -33,11 +32,9 @@ const AppRouter = () => {
             </PrivateRoute>
           }
         >
-          <Route index element={<Navigate to="/clientes" replace />} />
+          <Route index element={<DashboardPage />} />
           <Route path="clientes" element={<ClientesPage />} />
-          <Route path="sucursales" element={<SucursalesPage />} />
           <Route path="equipos" element={<EquiposPage />} />
-          <Route path="mantenimientos" element={<MantenimientosPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { getClientes, createCliente, updateCliente, deleteCliente } from '../services/clientesService';
+import { getSucursales } from '../services/sucursalesService';
+import { getEquipos } from '../services/equiposService';
 import ClienteCard from '../components/clientes/ClienteCard';
 import ClienteModal from '../components/clientes/ClienteModal';
+import ClienteDetailModal from '../components/clientes/ClienteDetailModal';
 import DeleteConfirmModal from '../components/clientes/DeleteConfirmModal';
 import SearchBar from '../components/common/SearchBar';
 import Loader from '../components/common/Loader';
@@ -9,28 +12,25 @@ import Toast from '../components/common/Toast';
 
 const ClientesPage = () => {
   const [clientes, setClientes] = useState([]);
+  const [sucursales, setSucursales] = useState([]);
+  const [equipos, setEquipos] = useState([]);
   const [filteredClientes, setFilteredClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Estados para modales
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
   
-  // Estado para búsqueda
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // Estado para toast
   const [toast, setToast] = useState(null);
 
-  // Cargar clientes
   useEffect(() => {
-    cargarClientes();
+    cargarDatos();
   }, []);
 
-  // Filtrar clientes cuando cambia el término de búsqueda
   useEffect(() => {
     if (searchTerm.trim() === '') {
       setFilteredClientes(clientes);
@@ -44,12 +44,18 @@ const ClientesPage = () => {
     }
   }, [searchTerm, clientes]);
 
-  const cargarClientes = async () => {
+  const cargarDatos = async () => {
     try {
       setLoading(true);
-      const data = await getClientes();
-      setClientes(data);
-      setFilteredClientes(data);
+      const [clientesData, sucursalesData, equiposData] = await Promise.all([
+        getClientes(),
+        getSucursales(),
+        getEquipos()
+      ]);
+      setClientes(clientesData);
+      setSucursales(sucursalesData);
+      setEquipos(equiposData);
+      setFilteredClientes(clientesData);
       setError(null);
     } catch (err) {
       setError('Error al cargar clientes. Verifica tu conexión a Firebase.');
@@ -73,6 +79,11 @@ const ClientesPage = () => {
     setIsModalOpen(true);
   };
 
+  const handleViewDetails = (cliente) => {
+    setSelectedCliente(cliente);
+    setIsDetailModalOpen(true);
+  };
+
   const handleDeleteClick = (cliente) => {
     setSelectedCliente(cliente);
     setIsDeleteModalOpen(true);
@@ -86,10 +97,10 @@ const ClientesPage = () => {
         showToast('Cliente actualizado exitosamente', 'success');
       } else {
         await createCliente(formData);
-        showToast('Cliente creado exitosamente', 'success');
+        showToast('Cliente y sucursal principal creados exitosamente', 'success');
       }
       setIsModalOpen(false);
-      cargarClientes();
+      cargarDatos();
     } catch (err) {
       showToast('Error al guardar el cliente', 'error');
       console.error(err);
@@ -104,13 +115,22 @@ const ClientesPage = () => {
       await deleteCliente(selectedCliente.id);
       showToast('Cliente eliminado exitosamente', 'success');
       setIsDeleteModalOpen(false);
-      cargarClientes();
+      cargarDatos();
     } catch (err) {
       showToast('Error al eliminar el cliente', 'error');
       console.error(err);
     } finally {
       setModalLoading(false);
     }
+  };
+
+  const getClienteStats = (clienteId) => {
+    const clienteSucursales = sucursales.filter(s => s.clienteId === clienteId);
+    const clienteEquipos = equipos.filter(e => e.clienteId === clienteId);
+    return {
+      sucursalesCount: clienteSucursales.length,
+      equiposCount: clienteEquipos.length
+    };
   };
 
   if (loading) return <Loader message="Cargando clientes..." />;
@@ -122,7 +142,7 @@ const ClientesPage = () => {
         <h2 className="text-xl font-semibold text-danger mb-2">Error al cargar</h2>
         <p className="text-danger/80">{error}</p>
         <button
-          onClick={cargarClientes}
+          onClick={cargarDatos}
           className="mt-4 px-6 py-2 bg-danger text-white rounded-lg hover:bg-danger/90 transition-colors"
         >
           Reintentar
@@ -133,12 +153,11 @@ const ClientesPage = () => {
 
   return (
     <div>
-      {/* Header */}
       <div className="mb-8 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-dark">Clientes</h1>
-            <p className="text-gray-600 mt-1">Gestiona tus clientes y sus sucursales</p>
+            <p className="text-gray-600 mt-1">Gestiona tus clientes, sucursales y equipos</p>
           </div>
           <button 
             onClick={handleCreateCliente}
@@ -148,7 +167,6 @@ const ClientesPage = () => {
           </button>
         </div>
 
-        {/* Buscador */}
         {clientes.length > 0 && (
           <SearchBar
             value={searchTerm}
@@ -158,7 +176,6 @@ const ClientesPage = () => {
         )}
       </div>
 
-      {/* Lista de clientes */}
       {filteredClientes.length === 0 ? (
         <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
           <div className="text-gray-400 text-5xl mb-4">
@@ -185,14 +202,20 @@ const ClientesPage = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredClientes.map((cliente) => (
-              <ClienteCard 
-                key={cliente.id} 
-                cliente={cliente}
-                onEdit={() => handleEditCliente(cliente)}
-                onDelete={() => handleDeleteClick(cliente)}
-              />
-            ))}
+            {filteredClientes.map((cliente) => {
+              const stats = getClienteStats(cliente.id);
+              return (
+                <ClienteCard 
+                  key={cliente.id} 
+                  cliente={cliente}
+                  equiposCount={stats.equiposCount}
+                  sucursalesCount={stats.sucursalesCount}
+                  onEdit={() => handleEditCliente(cliente)}
+                  onDelete={() => handleDeleteClick(cliente)}
+                  onViewDetails={() => handleViewDetails(cliente)}
+                />
+              );
+            })}
           </div>
           
           <div className="mt-8 text-center text-gray-600">
@@ -209,13 +232,18 @@ const ClientesPage = () => {
         </>
       )}
 
-      {/* Modales */}
       <ClienteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmitCliente}
         cliente={selectedCliente}
         loading={modalLoading}
+      />
+
+      <ClienteDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        cliente={selectedCliente}
       />
 
       <DeleteConfirmModal
@@ -226,7 +254,6 @@ const ClientesPage = () => {
         loading={modalLoading}
       />
 
-      {/* Toast */}
       {toast && (
         <Toast
           message={toast.message}

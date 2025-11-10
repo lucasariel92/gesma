@@ -36,6 +36,7 @@ export const createSucursal = async (sucursalData) => {
   try {
     const docRef = await addDoc(collection(db, COLLECTION_NAME), {
       ...sucursalData,
+      esPrincipal: sucursalData.esPrincipal || false,
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -64,6 +65,17 @@ export const deleteSucursal = async (sucursalId) => {
   try {
     await deleteDoc(doc(db, COLLECTION_NAME, sucursalId));
     return sucursalId;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+};
+
+export const deleteSucursalesByCliente = async (clienteId) => {
+  try {
+    const sucursales = await getSucursalesByCliente(clienteId);
+    const deletePromises = sucursales.map(s => deleteSucursal(s.id));
+    await Promise.all(deletePromises);
   } catch (error) {
     console.error('Error:', error);
     throw error;
